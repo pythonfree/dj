@@ -12,8 +12,13 @@
 Новая статья!!!
 {% endif %}
 
-<hr>
+<form action="{% url 'articles:leave' article.id %}" method="get">
+    {% csrf_token %}
+    <button type="submit">Выполнить код</button>
+</form>
 
+
+<hr>
 {% if latest_comment_list %}
 {% for c in latest_comment_list %}
 <p>
@@ -27,7 +32,6 @@
 
 
 <hr>
-
 <form action="{% url 'articles:leave_comment' article.id %}" method="post">
     {% csrf_token %}
     <input type="text" required placeholder="Ваше имя" name="name"><br>

@@ -5,6 +5,19 @@ from django.urls import reverse
 
 from .models import Article
 
+from django.http import HttpResponse
+
+import platform
+import sys
+
+
+#
+# def index(request):
+#     return HttpResponse("Привет, мир!")
+#
+def test(request):
+    return HttpResponse("ТЕСТОВАЯ СТРАНИЦА")
+
 
 def index(request):
     latest_articles_list = Article.objects.order_by('-pub_date')[:5]
@@ -33,12 +46,15 @@ def leave_comment(request, article_id):
     return HttpResponseRedirect(reverse('articles:detail', args=(a.id,)))
 
 
-from django.http import HttpResponse
+def leave(request, article_id):
+    try:
+        a = Article.objects.get(id=article_id)
+    except:
+        raise Http404("Статья не найдена!")
 
+    text = 'platform.uname(): {} \n sys.version: {} \n platform.architecture(): {}'.format(platform.uname(),
+                                                                                           sys.version,
+                                                                                           platform.architecture())
+    a.comment_set.create(author_name='', comment_text=text)
 
-#
-# def index(request):
-#     return HttpResponse("Привет, мир!")
-#
-def test(request):
-    return HttpResponse("ТЕСТОВАЯ СТРАНИЦА")
+    return HttpResponseRedirect(reverse('articles:detail', args=(a.id,)))
